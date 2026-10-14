@@ -16,23 +16,24 @@ A portfolio-ready, beginner-friendly machine-learning project that demonstrates 
 
 ## Architecture
 
-```text
-Virtual sensor simulator
-        |
-        v
-Simulated CSV dataset
-        |
-        v
-Cleaning + rolling features
-        |
-        v
-Train/test split -> Logistic Regression + Random Forest
-        |
-        v
-Metrics + selected model artifact
-        |
-        v
-Streamlit dashboard -> user-controlled virtual readings -> risk estimate
+```mermaid
+flowchart LR
+    simulator["Virtual sensor simulator"] --> csv["Synthetic sensor CSV"]
+    csv --> prepare["Cleaning and rolling feature engineering"]
+    prepare --> split["Stratified train/test split"]
+    split --> train["Train Logistic Regression and Random Forest"]
+    train --> evaluate["Compare accuracy, precision, recall, F1, and ROC-AUC"]
+    evaluate --> model["Select best model by F1 score"]
+    model --> artifact["Save model bundle"]
+    train --> metrics["Save metrics, test predictions, and charts"]
+
+    subgraph dashboard["Interactive prediction"]
+        controls["Streamlit dashboard and sensor controls"] --> reading["User-selected sensor readings"]
+        reading --> inference["Feature engineering and model inference"]
+        inference --> result["Failure estimate, probability, and alert"]
+    end
+
+    artifact --> inference
 ```
 
 ## Tech stack
@@ -41,40 +42,56 @@ Python 3.11 or 3.12, Pandas, NumPy, scikit-learn, Matplotlib, Joblib, Streamlit,
 
 ## Project structure
 
-```text
-AI-Predictive-Maintenance-IoT/
-├── app.py
-├── main.py
-├── requirements.txt
-├── README.md
-├── .gitignore
-├── data/
-│   ├── raw/.gitkeep
-│   └── processed/.gitkeep
-├── docs/
-│   ├── architecture.md
-│   └── dataset_notes.md
-├── Screenshots/
-│   ├── 01_Overview.png
-│   ├── 02_Sensor_Trends&Failure_Label_Dis.png
-│   ├── 03_Sensor_Dataset_Preview.png
-│   ├── 04_Model_Evalution.png
-│   ├── 05_No_Risk_Pred.png
-│   └── 06_Hogh_Risk_Pred.png
-├── models/.gitkeep
-├── notebooks/
-│   └── README.md
-├── outputs/
-│   ├── figures/.gitkeep
-│   ├── metrics/.gitkeep
-│   └── predictions/.gitkeep
-├── src/
-│   ├── __init__.py
-│   ├── simulator.py
-│   ├── train.py
-│   └── predict.py
-└── tests/
-    └── test_simulator.py
+```mermaid
+flowchart TD
+    root["AI-Predictive-Maintenance-IoT"]
+
+    root --> app["app.py"]
+    root --> main["main.py"]
+    root --> requirements["requirements.txt"]
+    root --> readme["README.md"]
+    root --> gitignore[".gitignore"]
+
+    root --> data["data"]
+    data --> raw["raw"]
+    raw --> rawkeep[".gitkeep"]
+    data --> processed["processed"]
+    processed --> processedkeep[".gitkeep"]
+
+    root --> docs["docs"]
+    docs --> architecture["architecture.md"]
+    docs --> datasetnotes["dataset_notes.md"]
+
+    root --> screenshots["Screenshots"]
+    screenshots --> overview["01_Overview.png"]
+    screenshots --> trends["02_Sensor_Trends&amp;Failure_Label_Dis.png"]
+    screenshots --> preview["03_Sensor_Dataset_Preview.png"]
+    screenshots --> evaluation["04_Model_Evalution.png"]
+    screenshots --> normal["05_No_Risk_Pred.png"]
+    screenshots --> highrisk["06_Hogh_Risk_Pred.png"]
+
+    root --> models["models"]
+    models --> modelkeep[".gitkeep"]
+
+    root --> notebooks["notebooks"]
+    notebooks --> notebookreadme["README.md"]
+
+    root --> outputs["outputs"]
+    outputs --> figures["figures"]
+    figures --> figureskeep[".gitkeep"]
+    outputs --> metrics["metrics"]
+    metrics --> metricskeep[".gitkeep"]
+    outputs --> predictions["predictions"]
+    predictions --> predictionskeep[".gitkeep"]
+
+    root --> src["src"]
+    src --> init["__init__.py"]
+    src --> simulator["simulator.py"]
+    src --> train["train.py"]
+    src --> predict["predict.py"]
+
+    root --> tests["tests"]
+    tests --> test["test_simulator.py"]
 ```
 
 ## Setup
@@ -240,7 +257,3 @@ Keep its real dataset columns and failure labels separate from the simulator's s
 - The random train/test split is for a compact teaching example; rigorous time-series evaluation should use chronological splits and leakage-aware feature engineering.
 - A displayed probability is a model score, not a calibrated guarantee of failure.
 - Do not use this prototype to control machinery or make safety-critical maintenance decisions.
-
-## Resume description
-
-**AI-Powered Predictive Maintenance System for IoT Devices** — Built a Python-based predictive-maintenance demonstration using simulated IoT sensor streams, feature engineering, Logistic Regression and Random Forest baselines, and a Streamlit dashboard for interactive risk estimation. Evaluated models with precision, recall, F1-score, and ROC-AUC; documented synthetic-data limitations and reproducible setup.
